@@ -3,7 +3,7 @@ plugins {
     id 'com.gradleup.shadow' version '8.3.0'
 }
 
-version = '2.17'
+version = '1.0.0'
 
 repositories {
     mavenCentral()
@@ -30,9 +30,6 @@ processResources {
     }
 }
 
-shadowJar {
-    relocate 'space.arim.morepaperlib', 'com.demkom58.divinedrop.libs.morepaperlib'
-}
 
 rootProject.tasks.named("processResources") {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
@@ -49,12 +46,13 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 shadowJar {
-    archiveBaseName.set("DivineDrop")
+    relocate 'space.arim.morepaperlib', 'com.minekartastudio.kartasmartdrops.libs.morepaperlib'
+    archiveBaseName.set("KartaSmartDrops")
     archiveClassifier.set(null)
 }
 
 jar {
-    archiveBaseName.set("DivineDrop")
+    archiveBaseName.set("KartaSmartDrops")
     archiveClassifier.set("thin")
 }
 

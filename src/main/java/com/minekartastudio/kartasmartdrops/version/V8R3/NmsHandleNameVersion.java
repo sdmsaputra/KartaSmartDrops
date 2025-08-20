@@ -1,0 +1,79 @@
+package com.minekartastudio.kartasmartdrops.version.V8R3;
+
+import com.minekartastudio.kartasmartdrops.drop.ItemHandler;
+import com.minekartastudio.kartasmartdrops.lang.Language;
+import com.minekartastudio.kartasmartdrops.version.Version;
+import lombok.SneakyThrows;
+import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.lang.invoke.MethodHandle;
+
+public abstract class NmsHandleNameVersion implements Version {
+    protected final ResourceClient client;
+    protected final @Nullable String nmsName;
+
+    protected MethodHandle asNMSCopyHandle;
+    protected MethodHandle getItemHandle;
+    protected MethodHandle getNameHandle;
+
+    public NmsHandleNameVersion(@NotNull final ResourceClient client,
+                                @Nullable final String nmsName,
+                                @NotNull final MethodHandle asNMSCopyHandle,
+                                @NotNull final MethodHandle getItemHandle,
+                                @NotNull final MethodHandle getNameHandle) {
+        this.client = client;
+        this.nmsName = nmsName;
+        this.asNMSCopyHandle = asNMSCopyHandle;
+        this.getItemHandle = getItemHandle;
+        this.getNameHandle = getNameHandle;
+    }
+
+    @Override
+    public @Nullable String getNmsName() {
+        return nmsName;
+    }
+
+    @NotNull
+    @Override
+    public Version.ResourceClient getClient() {
+        return client;
+    }
+
+    @Override
+    public String getI18NDisplayName(@Nullable ItemStack item) {
+        if (item == null)
+            return null;
+
+        return getName(item);
+    }
+
+    @NotNull
+    @Override
+    public abstract Listener createListener(ItemHandler handler);
+
+    @NotNull
+    @SneakyThrows
+    protected String getName(ItemStack bItemStack) {
+        if (bItemStack.hasItemMeta()) {
+            final ItemMeta itemMeta = bItemStack.getItemMeta();
+            if (itemMeta.hasDisplayName())
+                return itemMeta.getDisplayName();
+        }
+
+        Object itemStack = asNMSCopyHandle.invokeExact(bItemStack);
+        return getLangNameNMS(itemStack);
+    }
+
+    @NotNull
+    @SneakyThrows
+    protected String getLangNameNMS(Object itemStack) {
+        final Object item = getItemHandle.bindTo(itemStack).invokeExact();
+        final String name = (String) getNameHandle.bindTo(item).invokeExact(itemStack);
+        return Language.getInstance().getLocName(name + ".name").trim();
+    }
+
+}
