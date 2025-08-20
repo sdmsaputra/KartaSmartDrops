@@ -1,0 +1,18 @@
+name: DivineDrop
+main: com.demkom58.divinedrop.DivineDrop
+description: Awesome removal of items from the ground
+website: https://www.spigotmc.org/members/98068/
+version: ${version}
+authors:
+  - demkom58
+  - GdemkomG
+  - demkom
+api-version: 1.13
+folia-supported: true
+commands:
+  divinedrop:
+    aliases: [ddrop, dd]
+
+# /dd             | permissions: divinedrop.info
+# /dd reload      | permissions: divinedrop.reload
+# /dd getname     | permissions: divinedrop.getname
